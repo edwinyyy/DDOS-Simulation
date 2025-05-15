@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DDoS Attack Simulator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            text-align: center;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            margin-top: 50px;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            margin: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+        .attack-button {
+            background-color: #dc3545;
+            color: white;
+        }
+        .attack-button:hover {
+            background-color: #c82333;
+        }
+        .reset-button {
+            background-color: #007BFF;
+            color: white;
+        }
+        .reset-button:hover {
+            background-color: #0056b3;
+        }
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: #444;
+        }
+        p {
+            font-size: 16px;
+            color: #555;
+        }
+        footer {
+            margin-top: 50px;
+            font-size: 14px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DDoS Attack Simulator</h1>
+        <p>Current Target: <strong id="target-info">{{ target_ip }}</strong>:{{ target_port }}</p>
+        <form id="target-form">
+            <label for="target_ip">Enter Target IP:</label>
+            <input type="text" id="target_ip" name="target_ip" required>
+            <button type="submit" class="attack-button">Set Target IP</button>
+        </form>
+        <button class="attack-button" onclick="startAttack()">Start DDoS Attack</button>
+        <button class="reset-button" onclick="resetServer()">Reset Dummy Site</button>
+    </div>
+    <footer>
+        <p>Created for DDoS Attack Simulation. Please use ethically.</p>
+    </footer>
+    <script>
+        document.getElementById("target-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const targetIp = document.getElementById("target_ip").value;
+            fetch("/set_target", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams({ target_ip: targetIp }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                document.getElementById("target-info").textContent = targetIp;
+            })
+            .catch(err => console.error("Error:", err));
+        });
+
+        function startAttack() {
+            fetch("/simulate", { method: "POST" })
+                .then(response => response.json())
+                .then(data => alert(data.message))
+                .catch(err => console.error("Error:", err));
+        }
+
+        function resetServer() {
+            fetch("/reset", { method: "POST" })
+                .then(response => response.json())
+                .then(data => alert(data.message))
+                .catch(err => console.error("Error:", err));
+        }
+    </script>
+</body>
+</html>
